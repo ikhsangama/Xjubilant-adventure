@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  ts-express:
+    build:
+      context: .
+      dockerfile: express-ts.dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+    container_name: ts-express-container
+    expose:
+      - 3000
+    ports:
+      - "3000:3000" #open port 3000 local to port 3000
+    env_file:
+      - ./env/express-typescript.env
+    command: npm run dev
+    depends_on:
+      - db
+
+  # If POSTGRES_DB is not specified, then the value of POSTGRES_USER will be used.
+  # source: https://hub.docker.com/_/postgres
+  db:
+    image: postgres:alpine
+    restart: always
+    container_name: postgres-container
+    env_file:
+      - ./env/postgres.env
+    volumes:
+      - data:/var/lib/postgresql/data
+    ports: #easier check on localhost, not to expose it after development
+      - "5433:5432"
+volumes:
+  data:
+
+#  db:
+#    image: mongo
+#    restart: always
+#    container_name: mongo-container
+##    env_file:
+##      - ./env/postgres.env
+#    volumes:
+#      - data:/data/db
+#    ports: #easier check on localhost, not to expose it after development
+#      - "27018:27017"
+#volumes:
+#  data:
