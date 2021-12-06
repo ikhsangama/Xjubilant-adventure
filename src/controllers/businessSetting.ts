@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express';
 import { IBusinessSettingSettingService } from '../services/businessSetting';
-import { ok } from "assert";
 
 export class BusinessSettingController {
     private readonly businessService: IBusinessSettingSettingService;
@@ -13,8 +12,9 @@ export class BusinessSettingController {
 
         this.router.get('/', this.index.bind(this));
         this.router.get('/:uuid', this.detail.bind(this));
-        this.router.post('/', this.register.bind(this));
-        this.router.put('/:uuid', this.update.bind(this));
+        this.router.post('/', this.createOrUpdate.bind(this));
+        // this.router.put('/:uuid', this.update.bind(this));
+        this.router.delete('/:uuid', this.deleteSetting.bind(this));
     }
 
     getRouter() {
@@ -22,7 +22,7 @@ export class BusinessSettingController {
     }
 
     /**
-     * GET /businesss
+     * GET /businesss/settings
      * Get Business List
      */
     public index(req: Request, res: Response, next: any) {
@@ -38,7 +38,7 @@ export class BusinessSettingController {
     }
 
     /**
-     * GET /businesss/:id
+     * GET /businesss/settings/:id
      * Get Business by ID
      */
     public detail(req: Request, res: Response, next: any) {
@@ -54,13 +54,13 @@ export class BusinessSettingController {
     }
 
     /**
-     * POST /businesss/register
+     * POST /businesss
      * Register Business
      */
-    public register(req: Request, res: Response, next: any) {
+    public createOrUpdate(req: Request, res: Response, next: any) {
         const { body } = req;
         this.businessService
-            .create(body)
+            .createOrUpdate(body)
             .then((business) => {
                 res.status(201).send(business);
             })
@@ -70,19 +70,35 @@ export class BusinessSettingController {
     }
 
     /**
-     * PUT /businesss/:id
+     * PUT /businesss/settings/:id
      * Update Business by ID
      */
-    public update(req: Request, res: Response, next: any) {
+    // public update(req: Request, res: Response, next: any) {
+    //     const { uuid } = req.params;
+    //     const { body } = req;
+    //     this.businessService
+    //         .update(uuid, body)
+    //         .then((business) => {
+    //             res.status(200).send(business);
+    //         })
+    //         .catch((error) => {
+    //             next(error);
+    //         });
+    // }
+
+    /**
+     * DELETE /businesss/settings/:id
+     * Update Business by ID
+     */
+    public deleteSetting(req: Request, res: Response, next: any) {
         const { uuid } = req.params;
-        const { body } = req;
         this.businessService
-            .update(uuid, body)
-            .then((business) => {
-                res.status(200).send(business);
-            })
-            .catch((error) => {
-                next(error);
-            });
+          .deleteSetting(uuid)
+          .then((business) => {
+              res.status(200).send(business);
+          })
+          .catch((error) => {
+              next(error);
+          });
     }
 }

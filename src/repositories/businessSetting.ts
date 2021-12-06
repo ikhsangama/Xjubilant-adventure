@@ -1,12 +1,12 @@
-import {EntityRepository, Repository} from 'typeorm';
+import { DeleteResult, EntityRepository, Repository } from "typeorm";
 import { BusinessSetting } from '../entities/businessSetting';
 
 export interface IBusinessSettingRepo {
     findBusinessSetting(limit?: number, offset?: number): Promise<BusinessSetting[]>;
     findBusinessSettingByUuid(uuid: string): Promise<BusinessSetting>;
-    createBusinessSetting(business: Partial<BusinessSetting>): Promise<BusinessSetting>;
-    updateBusinessSetting(uuid: string, business: Partial<BusinessSetting>): Promise<BusinessSetting>;
-    // deleteBusinessSetting(uuid: string): Promise<BusinessSetting>;
+    createOrUpdateBusinessSetting(businessSetting: Partial<BusinessSetting>): Promise<BusinessSetting>;
+    // updateBusinessSetting(uuid: string, businessSetting: Partial<BusinessSetting>): Promise<BusinessSetting>;
+    deleteBusinessSetting(uuid: string): Promise<DeleteResult>;
 }
 
 /*
@@ -29,12 +29,22 @@ export class BusinessSettingRepository extends Repository<BusinessSetting> {
         return this.findOne(uuid);
     }
 
-    async createBusinessSetting(business: Partial<BusinessSetting>) {
-        return await this.save(business);
+    async createOrUpdateBusinessSetting(businessSetting: Partial<BusinessSetting>) {
+        const businessRecord = await this.findOne({
+            business_uuid: businessSetting.business_uuid
+        })
+        if(businessRecord){
+            return await this.save({ ...businessRecord, ...businessSetting });
+        }
+        return await this.save(businessSetting);
     }
 
-    async updateBusinessSetting(uuid: string, updateData: Partial<BusinessSetting>) {
-        const business = await this.findOneOrFail(uuid);
-        return this.save({ ...business, ...updateData });
+    // async updateBusinessSetting(uuid: string, updateData: Partial<BusinessSetting>) {
+    //     const business = await this.findOneOrFail(uuid);
+    //     return this.save({ ...business, ...updateData });
+    // }
+
+    async deleteBusinessSetting(uuid: string) {
+        return await this.delete(uuid);
     }
 }

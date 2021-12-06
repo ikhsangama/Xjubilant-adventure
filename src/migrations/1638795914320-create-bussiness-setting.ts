@@ -5,7 +5,7 @@ export class createBussinessSetting1638795914320 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
           new Table({
-              name: 'business_settings',
+              name: 'business_setting',
               columns: [
                   {
                       name: 'uuid',
@@ -29,13 +29,22 @@ export class createBussinessSetting1638795914320 implements MigrationInterface {
                       name: 'secret_key',
                       type: 'varchar'
                   },
+                  {
+                      name: 'created_at',
+                      type: 'timestamptz',
+                      default: 'now()'
+                  },
+                  {
+                      name: 'updated_at',
+                      type: 'timestamptz'
+                  }
               ]
           }),
           true)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('business_settings');
+        await queryRunner.dropTable('business_setting');
     }
 
 }

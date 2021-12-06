@@ -1,13 +1,14 @@
 import {IBusinessSettingRepo} from '../repositories/businessSetting';
 import {BusinessSetting} from '../entities/businessSetting';
+import { DeleteResult } from "typeorm";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IBusinessSettingSettingService {
     getAll(limit: number, offset?: number): Promise<BusinessSetting[]>;
     getByUuid(uuid: string): Promise<BusinessSetting>;
-    create(business: BusinessSetting): Promise<BusinessSetting>;
-    update(uuid: string, business: Partial<BusinessSetting>): Promise<BusinessSetting>;
-    // deleteSetting(uuid: string): Promise<BusinessSetting>;
+    createOrUpdate(business: BusinessSetting): Promise<BusinessSetting>;
+    // update(uuid: string, business: Partial<BusinessSetting>): Promise<BusinessSetting>;
+    deleteSetting(uuid: string): Promise<DeleteResult>;
 }
 
 export interface IBusinessSettingCreate {
@@ -38,17 +39,15 @@ export class BusinessSettingService {
         return this.businessRepository.findBusinessSettingByUuid(uuid);
     }
 
-    /*
-     * BusinessSetting must fill name at least 3 chars length
-     * */
-    async create(business: IBusinessSettingCreate) {
-        return this.businessRepository.createBusinessSetting(business);
+    async createOrUpdate(business: IBusinessSettingCreate) {
+        return this.businessRepository.createOrUpdateBusinessSetting(business);
     }
 
-    /*
-     * BusinessSetting can't update name with empty value or less than 3 chars length
-     * */
-    async update(uuid: string, business: Partial<BusinessSetting>) {
-        return this.businessRepository.updateBusinessSetting(uuid, business);
+    // async update(uuid: string, business: Partial<BusinessSetting>) {
+    //     return this.businessRepository.updateBusinessSetting(uuid, business);
+    // }
+
+    async deleteSetting(uuid: string) {
+        return this.businessRepository.deleteBusinessSetting(uuid);
     }
 }

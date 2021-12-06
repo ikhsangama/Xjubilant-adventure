@@ -7,6 +7,9 @@ import {BusinessSettingRepository} from "./repositories/businessSetting";
 import {BusinessSettingService} from "./services/businessSetting";
 import {BusinessSettingController} from "./controllers/businessSetting";
 import {errHandler} from "./middlewares/error-handler";
+import { NotificationRepository } from "./repositories/notification";
+import { NotificationService } from "./services/notification";
+import { NotificationController } from "./controllers/notification";
 
 (async () => {
         const app = express();
@@ -16,12 +19,16 @@ import {errHandler} from "./middlewares/error-handler";
 
         //Repositories
         const businessSettingRepo = getCustomRepository(BusinessSettingRepository);
+        const notificationRepo = getCustomRepository(NotificationRepository);
 
-        //Services
+
+          //Services
         const businessSettingService = new BusinessSettingService(businessSettingRepo);
+        const notificationService = new NotificationService(notificationRepo);
 
         //Controllers
         const businessSettingController = new BusinessSettingController(businessSettingService);
+        const notificationController = new NotificationController(notificationService);
 
         app.use(bodyParser.json({ limit: '5mb', type: 'application/json' }));
         app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,6 +37,7 @@ import {errHandler} from "./middlewares/error-handler";
 
         // Routes
         app.use('/api/business/settings', businessSettingController.getRouter());
+        app.use('/api/business/notifications', notificationController.getRouter());
         app.use(errHandler);
 
         app.listen(PORT, () => {

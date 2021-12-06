@@ -1,6 +1,6 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('business_settings')
+@Entity('business_setting')
 export class BusinessSetting {
     @PrimaryGeneratedColumn('uuid')
     uuid: string;
@@ -15,4 +15,10 @@ export class BusinessSetting {
 
     @Column()
     secret_key: string;
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
 }

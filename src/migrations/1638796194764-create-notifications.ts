@@ -5,7 +5,7 @@ export class createNotifications1638796194764 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
           new Table({
-              name: 'notifications',
+              name: 'notification',
               columns: [
                   {
                       name: 'uuid',
@@ -15,26 +15,46 @@ export class createNotifications1638796194764 implements MigrationInterface {
                       isGenerated: true
                   },
                   {
-                      name: 'business_uuid',
-                      type: 'varchar',
+                      name: 'payment_uuid',
+                      type: 'uuid',
+                      isNullable: false
+                  },
+                  {
+                      name: 'business_setting_uuid',
+                      type: 'uuid',
+                      isNullable: false
+                  },
+                  {
+                      name: 'is_sent',
+                      type: 'boolean',
                       isNullable: false,
-                      isUnique: true
+                      default: false
                   },
                   {
                       name: 'retry_count',
-                      type: 'varchar'
+                      type: 'number'
                   },
                   {
                       name: 'payload',
-                      type: 'json'
+                      type: 'object'
                   },
+                  {
+                      name: 'created_at',
+                      type: 'timestamptz',
+                      default: 'now()'
+                  },
+                  {
+                      name: 'updated_at',
+                      type: 'timestamptz',
+                      default: 'now()'
+                  }
               ]
           }),
           true)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('notifications');
+        await queryRunner.dropTable('notification');
     }
 
 }
