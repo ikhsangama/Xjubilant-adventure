@@ -4,7 +4,7 @@ import { Notification } from '../entities/notification';
 export interface INotificationRepo {
     findNotification(limit?: number, offset?: number): Promise<Notification[]>;
     findNotificationByUuid(uuid: string): Promise<Notification>;
-    createNotification(business: Partial<Notification>): Promise<Notification>;
+    saveNotification(notification: Partial<Notification>): Promise<Notification>;
 }
 
 /*
@@ -27,7 +27,7 @@ export class NotificationRepository extends Repository<Notification> {
         return this.findOne(uuid);
     }
 
-    async createNotification(business: Partial<Notification>) {
-        return await this.save(business);
+    async saveNotification(notification: Partial<Notification>) {
+        return await this.save(notification);
     }
 }

@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { INotificationService } from '../services/notification';
+import axios from "axios";
 
 export class NotificationController {
     private readonly notificationService: INotificationService;
@@ -13,6 +14,7 @@ export class NotificationController {
         this.router.get('/', this.index.bind(this));
         this.router.get('/:uuid', this.detail.bind(this));
         this.router.post('/', this.create.bind(this));
+        this.router.post('/:uuid/retry', this.retry.bind(this));
     }
 
     getRouter() {
@@ -21,7 +23,7 @@ export class NotificationController {
 
     /**
      * GET /notifications
-     * Get Business List
+     * Get Notification List
      */
     public async index(req: Request, res: Response, next: any) {
         const { limit, offset } = req.query;
@@ -35,7 +37,7 @@ export class NotificationController {
 
     /**
      * GET /notifications/:id
-     * Get Business by ID
+     * Get Notification by ID
      */
     public async detail(req: Request, res: Response, next: any) {
         const { uuid } = req.params;
@@ -49,24 +51,31 @@ export class NotificationController {
 
     /**
      * POST /notifications
-     * Register Business
+     * Create Notification
      */
     public async create(req: Request, res: Response, next: any) {
-        const { payment_uuid, business_setting_uuid, payload } = req.body;
+        const { body } = req;
         try{
-            const errors = [];
-            if (!payment_uuid) errors.push('payment_uuid must be filled');
-            if (!business_setting_uuid) errors.push('business_setting_uuid must be filled');
-            if (!payload) errors.push('payload must be filled');
-            // eslint-disable-next-line no-throw-literal
-            if (errors.length > 0) throw { name: 'Invalid Input', errors, status: 400 };
-            const notification = await this.notificationService.create({
-                payment_uuid,
-                business_setting_uuid,
-                is_sent: false,
-                retry_count: 0,
-                payload,
-            })
+            const notification = await this.notificationService.create(body);
+            res.status(201).send(notification);
+        }catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     * POST /notifications/:id/retry
+     * Retry send notification
+     */
+    public async retry(req: Request, res: Response, next: any) {
+        const { uuid } = req.params;
+        try{
+            let notification = await this.notificationService.getByUuid(uuid);
+            if(!notification) throw {name: 'Not Found', msg: 'notification not found', status: 404};
+            notification = await this.notificationService.create({
+                ...notification,
+                retry_count: notification.retry_count+1
+            });
             res.status(201).send(notification);
         }catch (error) {
             next(error);

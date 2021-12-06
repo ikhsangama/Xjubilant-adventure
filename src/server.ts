@@ -24,7 +24,7 @@ import { NotificationController } from "./controllers/notification";
 
           //Services
         const businessSettingService = new BusinessSettingService(businessSettingRepo);
-        const notificationService = new NotificationService(notificationRepo);
+        const notificationService = new NotificationService(notificationRepo, businessSettingRepo);
 
         //Controllers
         const businessSettingController = new BusinessSettingController(businessSettingService);
