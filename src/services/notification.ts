@@ -2,6 +2,7 @@ import { INotificationRepo } from "../repositories/notification";
 import { Notification } from "../entities/notification";
 import { IBusinessSettingRepo } from "src/repositories/businessSetting";
 import axios from "axios";
+import { generateSign } from "../utilities/gen-signature";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface INotificationService {
@@ -59,6 +60,8 @@ export class NotificationService {
             is_sent: false,
             retry_count: notification.retry_count || 0,
         });
+
+        const signature_key = generateSign(notification.payload, businessSetting.secret_key);
         //asynchronous
         //can be optimized with broker RabbitMQ / Kafka
         axios({
@@ -66,7 +69,7 @@ export class NotificationService {
             url: businessSetting.webhook_url,
             headers: {
                 "impd-key": notificationResponse.payment_uuid,
-                "secret-key": businessSetting.secret_key
+                "token": signature_key
             },
             data: notificationResponse.payload
         })
