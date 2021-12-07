@@ -54,6 +54,7 @@ export class NotificationService {
 
         const businessSetting = await this.businessRepository.findBusinessSettingByUuid(notification.business_setting_uuid);
         if (!businessSetting) throw {name: 'Not Found', msg: 'business setting not found', status: 404};
+        if (!businessSetting.secret_key) throw {name: 'Not Found', msg: 'secret key header not found', status: 404};
         let notificationResponse = await this.notificationRepository.saveNotification({ ...notification,
             is_sent: false,
             retry_count: notification.retry_count || 0,
@@ -64,7 +65,8 @@ export class NotificationService {
             method: "POST",
             url: businessSetting.webhook_url,
             headers: {
-                "payment-key": notificationResponse.payment_uuid
+                "impd-key": notificationResponse.payment_uuid,
+                "secret-key": businessSetting.secret_key
             },
             data: notificationResponse.payload
         })
