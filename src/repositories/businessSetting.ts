@@ -1,12 +1,15 @@
 import { DeleteResult, EntityRepository, Repository } from "typeorm";
-import { BusinessSetting } from '../entities/businessSetting';
+import { BusinessSetting } from "../entities/businessSetting";
 
 export interface IBusinessSettingRepo {
-    findBusinessSetting(limit?: number, offset?: number): Promise<BusinessSetting[]>;
-    findBusinessSettingByUuid(uuid: string): Promise<BusinessSetting>;
-    createOrUpdateBusinessSetting(businessSetting: Partial<BusinessSetting>): Promise<BusinessSetting>;
-    // updateBusinessSetting(uuid: string, businessSetting: Partial<BusinessSetting>): Promise<BusinessSetting>;
-    deleteBusinessSetting(uuid: string): Promise<DeleteResult>;
+  findBusinessSetting(limit?: number, offset?: number): Promise<BusinessSetting[]>;
+
+  findBusinessSettingByUuid(uuid: string): Promise<BusinessSetting>;
+
+  createOrUpdateBusinessSetting(businessSetting: Partial<BusinessSetting>): Promise<BusinessSetting>;
+
+  // updateBusinessSetting(uuid: string, businessSetting: Partial<BusinessSetting>): Promise<BusinessSetting>;
+  deleteBusinessSetting(uuid: string): Promise<DeleteResult>;
 }
 
 /*
@@ -15,29 +18,29 @@ export interface IBusinessSettingRepo {
 @EntityRepository(BusinessSetting)
 export class BusinessSettingRepository extends Repository<BusinessSetting> {
 
-    async findBusinessSetting(limit = 0, offset = 0) {
-        return this.find({
-            skip: offset,
-            take: limit,
-            order: {
-                uuid: 'DESC'
-            }
-        });
-    }
+  async findBusinessSetting(limit = 0, offset = 0) {
+    return this.find({
+      skip: offset,
+      take: limit,
+      order: {
+        uuid: "DESC"
+      }
+    });
+  }
 
-    async findBusinessSettingByUuid(uuid: string) {
-        return this.findOne(uuid);
-    }
+  async findBusinessSettingByUuid(uuid: string) {
+    return this.findOne(uuid);
+  }
 
-    async createOrUpdateBusinessSetting(businessSetting: Partial<BusinessSetting>) {
-        const businessRecord = await this.findOne({
-            business_uuid: businessSetting.business_uuid
-        })
-        return await this.save({ ...businessRecord, ...businessSetting });
+  async createOrUpdateBusinessSetting(businessSetting: Partial<BusinessSetting>) {
+    const businessRecord = await this.findOne({
+      business_uuid: businessSetting.business_uuid
+    });
+    return await this.save({ ...businessRecord, ...businessSetting });
 
-    }
+  }
 
-    async deleteBusinessSetting(uuid: string) {
-        return await this.delete(uuid);
-    }
+  async deleteBusinessSetting(uuid: string) {
+    return await this.delete(uuid);
+  }
 }

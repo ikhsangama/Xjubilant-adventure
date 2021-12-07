@@ -1,9 +1,9 @@
 import Ormconfig from "../ormconfig";
-import {Connection, createConnection} from 'typeorm';
-import {sleep} from "./sleep"
-import { logger } from './logger';
-import {PostgresDriver} from "typeorm/driver/postgres/PostgresDriver";
-import {Pool} from 'pg';
+import { Connection, createConnection } from "typeorm";
+import { sleep } from "./sleep";
+import { logger } from "./logger";
+import { PostgresDriver } from "typeorm/driver/postgres/PostgresDriver";
+import { Pool } from "pg";
 
 // Handles unstable/intermitten connection lost to DB
 // opening a database connection is an expensive operation,
@@ -15,19 +15,19 @@ function connectionGuard(connection: Connection) {
     const pool = connection.driver.master as Pool;
 
     // Add handler on pool error event
-    pool.on('error', async (err) => {
-      logger.error(err, 'Connection pool erring out, Reconnecting...');
+    pool.on("error", async (err) => {
+      logger.error(err, "Connection pool erring out, Reconnecting...");
       try {
         await connection.close();
       } catch (innerErr) {
-        logger.error(innerErr, 'Failed to close connection');
+        logger.error(innerErr, "Failed to close connection");
       }
       while (!connection.isConnected) {
         try {
           await connection.connect(); // eslint-disable-line
-          logger.info('Reconnected DB');
+          logger.info("Reconnected DB");
         } catch (error) {
-          logger.error(error, 'Reconnect Error');
+          logger.error(error, "Reconnect Error");
         }
 
         if (!connection.isConnected) {
@@ -48,11 +48,11 @@ export async function connect() {
 
   while (!isConnected) {
     try {
-      logger.info('Connecting to DB...')
+      logger.info("Connecting to DB...");
       connection = await createConnection(Ormconfig);
       isConnected = connection.isConnected;
     } catch (error) {
-      logger.error('Connecting to DB...');
+      logger.error("Connecting to DB...");
     }
 
     if (!isConnected) {
@@ -61,6 +61,6 @@ export async function connect() {
     }
   }
 
-  logger.info('Connected to DB', connection.options);
+  logger.info("Connected to DB", connection.options);
   connectionGuard(connection);
 }

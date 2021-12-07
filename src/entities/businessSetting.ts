@@ -1,26 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('business_setting')
+@Entity("business_setting")
 export class BusinessSetting {
-    @PrimaryGeneratedColumn('uuid')
-    uuid: string;
+  @PrimaryGeneratedColumn("uuid")
+  uuid: string;
 
-    @Column({
-        nullable: false
-    })
-    business_uuid: string;
+  @Column({
+    nullable: false
+  })
+  business_uuid: string;
 
-    @Column()
-    webhook_url: string;
+  @Column()
+  webhook_url: string;
 
-    @Column({
-        nullable: true
-    })
-    secret_key: string;
+  @Column({
+    nullable: true
+  })
+  secret_key: string;
 
-    @CreateDateColumn()
-    created_at: Date;
+  @CreateDateColumn()
+  created_at: Date;
 
-    @UpdateDateColumn()
-    updated_at: Date;
+  @UpdateDateColumn()
+  updated_at: Date;
 }
