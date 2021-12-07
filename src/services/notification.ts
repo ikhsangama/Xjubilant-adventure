@@ -59,6 +59,7 @@ export class NotificationService {
             retry_count: notification.retry_count || 0,
         });
         //asynchronous
+        //can be optimized with broker RabbitMQ / Kafka
         axios({
             method: "POST",
             url: businessSetting.webhook_url,

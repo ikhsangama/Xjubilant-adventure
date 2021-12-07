@@ -13,7 +13,9 @@ export class BusinessSetting {
     @Column()
     webhook_url: string;
 
-    @Column()
+    @Column({
+        nullable: true
+    })
     secret_key: string;
 
     @CreateDateColumn()

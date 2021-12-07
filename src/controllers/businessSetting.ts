@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { IBusinessSettingSettingService } from '../services/businessSetting';
+import { randString } from "../utilities/gen-key";
 
 export class BusinessSettingController {
     private readonly businessService: IBusinessSettingSettingService;
@@ -12,8 +13,8 @@ export class BusinessSettingController {
 
         this.router.get('/', this.index.bind(this));
         this.router.get('/:uuid', this.detail.bind(this));
+        this.router.post('/:uuid/key', this.generateSecret.bind(this));
         this.router.post('/', this.createOrUpdate.bind(this));
-        // this.router.put('/:uuid', this.update.bind(this));
         this.router.delete('/:uuid', this.deleteSetting.bind(this));
     }
 
@@ -70,21 +71,25 @@ export class BusinessSettingController {
     }
 
     /**
-     * PUT /businesss/settings/:id
-     * Update Business by ID
+     * POST /businesss/settings/:id/key
+     * Generate secret Key for each business
      */
-    // public update(req: Request, res: Response, next: any) {
-    //     const { uuid } = req.params;
-    //     const { body } = req;
-    //     this.businessService
-    //         .update(uuid, body)
-    //         .then((business) => {
-    //             res.status(200).send(business);
-    //         })
-    //         .catch((error) => {
-    //             next(error);
-    //         });
-    // }
+    public async generateSecret(req: Request, res: Response, next: any) {
+        const { uuid } = req.params;
+        try{
+            let business = await this.businessService.getByUuid(uuid);
+            if(!business) throw {name: 'Not Found', msg: 'business setting not found', status: 404};
+            const secret_key = randString();
+            console.log(business);
+            business = await this.businessService.createOrUpdate({
+                ...business,
+                secret_key
+            })
+            res.status(200).send({ secret_key });
+        }catch (error) {
+            next(error);
+        }
+    }
 
     /**
      * DELETE /businesss/settings/:id

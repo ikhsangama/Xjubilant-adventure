@@ -33,16 +33,9 @@ export class BusinessSettingRepository extends Repository<BusinessSetting> {
         const businessRecord = await this.findOne({
             business_uuid: businessSetting.business_uuid
         })
-        if(businessRecord){
-            return await this.save({ ...businessRecord, ...businessSetting });
-        }
-        return await this.save(businessSetting);
-    }
+        return await this.save({ ...businessRecord, ...businessSetting });
 
-    // async updateBusinessSetting(uuid: string, updateData: Partial<BusinessSetting>) {
-    //     const business = await this.findOneOrFail(uuid);
-    //     return this.save({ ...business, ...updateData });
-    // }
+    }
 
     async deleteBusinessSetting(uuid: string) {
         return await this.delete(uuid);

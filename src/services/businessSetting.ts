@@ -44,7 +44,7 @@ export class BusinessSettingService {
         const { business_uuid, webhook_url, secret_key} = business;
         if (!business_uuid) errors.push('business_uuid must be filled');
         if (!webhook_url) errors.push('webhook_url must be filled');
-        if (!secret_key) errors.push('secret_key must be filled');
+        // if (!secret_key) errors.push('secret_key must be filled');
         // eslint-disable-next-line no-throw-literal
         if (errors.length > 0) throw { name: 'Invalid Input', errors, status: 400 };
         return this.businessRepository.createOrUpdateBusinessSetting(business);
